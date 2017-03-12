@@ -6,21 +6,22 @@
 
 var mongoose = require('mongoose');
 
+/* eslint new-cap: 0 */
 var questSchema = mongoose.Schema({
-    id: Number,
-    title: String,
-    description: String,
-    rating: Number,
-    likesCount: Number,
-    author: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
-    },
-    photos: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'photo'
-    }],
-    isPublished: Number
+	id: Number,
+	title: String,
+	description: String,
+	rating: Number,
+	likesCount: Number,
+	author: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'user'
+	},
+	photos: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'photo'
+	}],
+	isPublished: Number
 });
 
 var quest = mongoose.model('quest', questSchema);
