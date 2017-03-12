@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node node_modules/gulp/bin/gulp build && node app.js"
+    "start": "node node_modules/gulp/bin/gulp build && node app.js",
+    "test:watch": "npm run test -- -w",
+    "test": "mocha tests/",
+    "lint:js": "eslint src/**/*.js",
+    "lint:css": "stylelint **/*.css",
+    "lint": "npm run lint:js & npm run lint:css"
   },
   "dependencies": {
     "babel": "^6.23.0",
@@ -38,5 +43,10 @@
   "engines": {
     "node": "6.10.x",
     "npm": "3.10.x"
+  },
+  "devDependencies": {
+    "eslint": "^3.17.1",
+    "eslint-config-xo": "^0.17.0",
+    "mocha": "^3.2.0"
   }
 }
