@@ -7,7 +7,7 @@
     "test:watch": "npm run test -- -w",
     "test": "mocha tests/",
     "lint:js": "eslint src/**/*.js",
-    "lint:css": "stylelint src/**/*.css",
+    "lint:css": "stylelint src/**/*.less",
     "lint": "npm test & npm run lint:js"
   },
   "dependencies": {

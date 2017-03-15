@@ -75,10 +75,9 @@ function getUniqueBlockName(directory) {
 	return directory.split(Path.sep).join('-');
 }
 
-gulp.task('html:build', () => {
+gulp.task('html:build:prod', () => {
 	gulp.src(path.src.html) // Выберем файлы по нужному пути
-        .pipe(gulp.dest(path.build.html)) // Выплюнем их в папку build
-        .pipe(reload({stream: true})); // И перезагрузим наш сервер для обновлений
+        .pipe(gulp.dest(path.build.html)); // Выплюнем их в папку build
 });
 
 function bufferReplace(file, match, str) {
@@ -91,7 +90,16 @@ function bufferReplace(file, match, str) {
     file.contents = new Buffer(file.contents.toString().replace(match, str));
 }
 
-gulp.task('hb:build', () => {
+gulp.task('html:build:dev', () => {
+    reload({stream: true});
+});
+
+gulp.task('html:build', () => {
+	['html:build:prod',
+     'html:build:dev']
+});
+
+gulp.task('hb:build:prod', () => {
 	gulp.src([path.src.hb, '!' + path.src.layouts]) // Выберем файлы по нужному пути
         .pipe(tap((file, t) => {
             let dir = Path.dirname(file.relative);
@@ -117,10 +125,18 @@ gulp.task('hb:build', () => {
 
 	gulp.src(path.src.layouts) // Выберем файлы по нужному пути
         .pipe(gulp.dest(path.build.layouts)) // Выплюнем их в папку build
-        .pipe(reload({stream: true})); // И перезагрузим наш сервер для обновлений
 });
 
-gulp.task('js:build', () => {
+gulp.task('hb:build:dev', () => {
+    reload({stream: true}); // И перезагрузим наш сервер для обновлений
+});
+
+gulp.task('hb:build', () => {
+    ['hb:build:prod',
+     'hb:build:dev'];
+});
+
+gulp.task('js:build:prod', () => {
 	gulp.src(path.src.js) // Найдем наш main файл
         .pipe(sourcemaps.init()) // Инициализируем sourcemap
         .pipe(babel()) // переводим ES6 => ES5
@@ -128,10 +144,18 @@ gulp.task('js:build', () => {
         .pipe(concat('all.js')) // Конкатинируем js
         .pipe(sourcemaps.write()) // Пропишем карты
         .pipe(gulp.dest(path.build.js)) // Выплюнем готовый файл в build
-        .pipe(reload({stream: true})); // И перезагрузим сервер
 });
 
-gulp.task('style:build', () => {
+gulp.task('js:build:dev', () => {
+    greload({stream: true}); // И перезагрузим наш сервер для обновлений
+});
+
+gulp.task('js:build', () => {
+    ['js:build:prod',
+     'js:build:dev'];
+});
+
+gulp.task('style:build:prod', () => {
 	gulp.src(path.src.style) // Выберем наши less файлы
         .pipe(sourcemaps.init()) // То же самое что и с js
         .pipe(tap((file, t) => {
@@ -154,10 +178,18 @@ gulp.task('style:build', () => {
         .pipe(concat('all.css')) // Конкатинируем css
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(path.build.css)) // И в build
-        .pipe(reload({stream: true}));
 });
 
-gulp.task('image:build', () => {
+gulp.task('style:build:dev', () => {
+    reload({stream: true}); // И перезагрузим наш сервер для обновлений
+});
+
+gulp.task('style:build', () => {
+    ['style:build:prod',
+     'style:build:dev'];
+});
+
+gulp.task('image:build:prod', () => {
 	gulp.src(path.src.img) // Выберем наши картинки
         .pipe(imagemin({ // Сожмем их
 	progressive: true,
@@ -166,7 +198,15 @@ gulp.task('image:build', () => {
 	interlaced: true
 }))
         .pipe(gulp.dest(path.build.img)) // И бросим в build
-        .pipe(reload({stream: true}));
+});
+
+gulp.task('image:build:dev', () => {
+    reload({stream: true}); // И перезагрузим наш сервер для обновлений
+});
+
+gulp.task('image:build', () => {
+    ['image:build:prod',
+     'image:build:dev'];
 });
 
 gulp.task('fonts:build', () => {
@@ -193,6 +233,16 @@ gulp.task('build', [
 	'sjs:build'
 ]);
 
+gulp.task('build:prod', [
+    'html:build:prod',
+    'hb:build:prod',
+    'js:build:prod',
+    'style:build:prod',
+    'fonts:build',
+    'image:build:prod',
+    'sjs:build'
+]);
+
 gulp.task('watch', () => {
 	watch([path.watch.html], (event, cb) => {
 		gulp.start('html:build');
@@ -200,9 +250,9 @@ gulp.task('watch', () => {
 	watch([path.watch.style], (event, cb) => {
 		gulp.start('style:build');
 	});
-	watch([path.watch.layouts], (event, cb) => {
-		gulp.start('hb:build');
-	});
+	// watch([path.watch.layouts], (event, cb) => {
+	// 	gulp.start('hb:build');
+	// });
 	watch([path.watch.js], (event, cb) => {
 		gulp.start('js:build');
 	});
